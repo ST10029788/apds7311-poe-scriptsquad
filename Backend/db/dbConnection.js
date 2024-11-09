@@ -8,12 +8,12 @@ dotenv.config();
 // Get MongoDB connection string from env or set to an empty string if not found
 const connectionString = process.env.MONGO_URI || "";
 
-console.log("MongoDB Connection String:", connectionString); // Log the connection string for debugging 
+console.log("MongoDB connection String:", connectionString); // Log the connection string for debugging 
 
-// Connect to database
+// connect to database
 const connectToDatabase = async () => {
     try {
-        // Connect to MongoDB using Mongoose with the provided connection string
+        // connect to MongoDB using Mongoose with the provided connection string
         await mongoose.connect(connectionString, {
             useNewUrlParser: true, // Use the new MongoDB URL parser
             useUnifiedTopology: true, // Use the new topology engine for more stable connections
@@ -22,7 +22,7 @@ const connectToDatabase = async () => {
         
     } catch (e) {
         // If there’s an error connecting, log the error and throw it to stop the execution
-        console.error('Database connection error:', e);
+        console.error('Database Connection error:', e);
         throw e; // Re-throw the error to ensure the process halts on failure
     }
 };

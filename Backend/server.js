@@ -6,10 +6,10 @@ const app = express();
 const PORT = 3001; // Port server will run on
 const user = require("./routes/user"); // Import user route handler
 const payment = require("./routes/payment"); // Import payment route handler
-const { connectToDatabase } = require('./db/conn'); // Import database connection 
+const { connectToDatabase } = require('./db/dbConnection'); // Import database connection 
 const helmet = require('helmet'); // Helmet middleware for securing HTTP headers
 
-// Connect to database
+// connect to database
 connectToDatabase().catch(err => {
     console.error('Failed to connect to the database', err); // Log error if connection fails
     process.exit(1); // Exit application if the database connection fails
