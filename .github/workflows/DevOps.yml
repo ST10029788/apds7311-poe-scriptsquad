@@ -34,12 +34,19 @@ jobs:
         with:
           node-version: '18'
 
-          # Step 3: Install backend dependencies
+      # Debugging Step: List the directory contents to verify path
+      - name: List Directory Contents
+        run: |
+          ls -al
+          echo "Check if the directory 'International Payments Portal_APDS7311/Backend' exists."
+      
+      # Step 3: Install backend dependencies
       - name: Install Backend Dependencies
         run: |
           cd "International Payments Portal_APDS7311/Backend"
           npm install
           echo "Backend dependencies installed."
+
       
       # Step 4: Verify Node.js version
       - name: 🛠 Verify Node.js Version
