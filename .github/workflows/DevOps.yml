@@ -63,7 +63,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adoptopenjdk' 
+          distribution: 'temurin' 
+
 
 
       # Step 6: Run SonarCloud Scan
