@@ -38,12 +38,12 @@ jobs:
       - name: List Directory Contents
         run: |
           ls -al
-          echo "Check if the directory 'International Payments Portal_APDS7311/Backend' exists."
+          echo "Check if the directory 'INTERNATIONAL PAYMENTS PORTAL_APDS7311/Backend' exists."
       
       # Step 3: Install backend dependencies
       - name: Install Backend Dependencies
         run: |
-          cd "International Payments Portal_APDS7311/Backend"
+          cd "INTERNATIONAL PAYMENTS PORTAL_APDS7311/Backend"
           npm install
           echo "Backend dependencies installed."
 
