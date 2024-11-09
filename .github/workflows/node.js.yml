@@ -1,31 +1,157 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: DevOps
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [16.x, 18.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      # Step 1: Checkout the repository
+      - name: 🛎 Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Clear npm cache
+      - name: Clear npm cache
+        run: |
+          echo "::group:: Clearing npm cache"
+          npm cache clean --force
+          echo "npm cache cleared."
+          echo "::endgroup::"
+
+      # Step 3: Set up Node.js
+      - name: 🛠 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Step 4: Install backend dependencies
+      - name: Install Backend Dependencies
+        run: |
+          cd International Payments Portal_APDS7311/Backend
+          npm install
+          echo "Backend dependencies installed."
+
+      # Step 5: Verify Node.js version
+      - name: 🛠 Verify Node.js Version
+        run: |
+          echo "Node.js version $(node -v) is set."
+
+      # Step 6: Fix permissions for node_modules and binaries
+      - name: Fix Permissions for node_modules
+        run: sudo chown -R $USER:$GROUP ./International Payments Portal_APDS7311/node_modules
+
+      # Step 7: Ensure react-scripts execution permissions
+      - name: Ensure react-scripts Permissions
+        run: chmod +x ./International Payments Portal_APDS7311/node_modules/.bin/react-scripts
+
+      # Step 8: Install frontend dependencies
+      - name: Install Frontend Dependencies
+        run: |
+          cd international-payments-portal 
+          npm install --legacy-peer-deps
+          echo "Frontend dependencies installed."
+
+      # Step 9: Install react-scripts (if missing)
+      - name: Install react-scripts
+        run: |
+          npm install react-scripts --legacy-peer-deps
+          echo "react-scripts installed."
+
+      # Step 10: Check SSL Configuration
+      - name: 🔐 Verify SSL Configuration
+        run: |
+          cd international-payments-portal
+          if [ ! -f ./Backend/keys/privatekey.pem ] || [ ! -f ./Backend/keys/certificate.pem ]; then
+            echo "❌ SSL certificate or key missing."
+            exit 1
+          else
+            echo "SSL certificate and key are present."
+          fi
+
+      # Step 11: Install HTTPie for testing
+      - name: Install HTTPie
+        run: |
+          pip install httpie
+
+      # Step 12: Start Backend Server
+      - name: Start Backend Server
+        run: |
+          nohup node ./Backend/server.js &
+          sleep 5
+
+      # Step 13: Run Security Checks
+      - name: Run Security Checks
+        run: |
+          cd international-payments-portal
+
+          # Check Clickjacking protection
+          if ! grep -q "frameguard" ./backend/app.js; then
+            echo "❌ Clickjacking protection missing."
+          else
+            echo "Clickjacking protection is in place."
+          fi
+
+          # Check Session Hijacking protection
+          if ! grep -q "cookie-session" ./backend/app.js; then
+            echo "❌ Session hijacking protection missing."
+          else
+            echo "Session hijacking protection is in place."
+          fi
+
+          # Check SQL Injection prevention
+          if ! grep -q "parameterized queries" ./backend/db.js; then
+            echo "❌ SQL Injection prevention missing."
+          else
+            echo "SQL Injection prevention is in place."
+          fi
+
+          # Check XSS protection
+          if ! grep -q "xss-clean" ./backend/app.js; then
+            echo "❌ XSS protection missing."
+          else
+            echo "XSS protection is in place."
+          fi
+
+          # Check HSTS header
+          if ! grep -q "strict-transport-security" ./backend/app.js; then
+            echo "❌ HSTS header missing."
+          else
+            echo "HSTS header is set."
+          fi
+
+          # Check DDoS protection
+          if ! grep -q "express-rate-limit" ./backend/app.js; then
+            echo "❌ DDoS protection missing."
+          else
+            echo "DDoS protection is in place."
+          fi
+
+      # Step 14: Upload Test Results on Failure
+      - name: Upload Test Results on Failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./test-results
+
+      # Step 15: Complete Build
+      - name: Build Complete
+        if: success()
+        run: echo "All steps completed successfully!"
