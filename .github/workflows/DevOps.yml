@@ -59,6 +59,8 @@ jobs:
           cd "international-payments-portal"
           npm install --legacy-peer-deps
           echo "Frontend dependencies installed."
+          timeout-minutes: 20  # Adjust the timeout value as needed
+
 
 
       # Step 6: Run SonarCloud Scan
