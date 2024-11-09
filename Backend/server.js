@@ -4,8 +4,8 @@ const https = require('https');
 const fs = require('fs');
 const app = express();
 const PORT = 3001; // Port server will run on
-const user = require("./routes/user"); // Import user route handler
-const payment = require("./routes/payment"); // Import payment route handler
+const user = require("./routes/users"); // Import user route handler
+const payment = require("./routes/payments"); // Import payment route handler
 const { connectToDatabase } = require('./db/dbConnection'); // Import database connection 
 const helmet = require('helmet'); // Helmet middleware for securing HTTP headers
 
@@ -34,10 +34,8 @@ app.use(helmet()); // Add security headers to the HTTP response
 app.use(express.json()); // Middleware 
 
 // Define routes for user and payment
-app.use('/user', user); // Route for user-related API endpoints
-app.route("/user", user); // Another definition of the user route
-app.use('/payment', payment); // Route for payment-related API endpoints
-app.route('/payment', payment); // Another definition of the payment route
+app.use('/users', user); // Route for user-related API endpoints
+app.use('/payments', payment); // Route for payment-related API endpoints
 
 // Create and start an HTTPS server with the provided options (SSL keys)
 https.createServer(options, app).listen(PORT, () => {

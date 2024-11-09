@@ -4,16 +4,17 @@ const jwt = require("jsonwebtoken"); //JSON Web Tokens
 const rateLimit = require("express-rate-limit"); // Middleware for rate limiting requests
 const ExpressBrute = require("express-brute"); // Middleware to prevent brute force attacks
 const { User, Account, Employee, Admin, Manager } = require('./models'); // Import models for User, Account, etc.
-const checkAuth = require("../check-auth"); // Middleware to check authentication
+const checkAuth = require("../authMiddleware"); // Middleware to check authentication
 require('dotenv').config(); // Load env
 const validationchecks = require('../utils/validationchecks'); // Utility functions for validation
 const helmet = require("helmet"); // Middleware for securing HTTP headers
 const checkRole = require('../RoleMiddleware/roleMiddleware'); // Middleware to check user roles
+const express = require("express"); // Required to initialize router
 
 const router = express.Router(); // Initialize router for handling routes
 router.use(helmet()); // Use Helmet to secure headers
 const store = new ExpressBrute.MemoryStore(); // Store for brute-force attempts tracking
-// const bruteforce = new ExpressBrute(store); // Initialize brute-force prevention (not currently in use)
+//const bruteforce = new ExpressBrute(store); // Initialize brute-force prevention (not currently in use)
 
 // Rate limiting for registration and login to prevent abuse
 const registrationLimiter = rateLimit({

@@ -1,7 +1,7 @@
 // Import necessary modules
 const express = require("express");
 const { User, Account, Transaction } = require('./models');  // Import models (User, Account, Transaction)
-const checkAuth = require('../check-auth');  // Import authentication middleware
+const checkAuth = require('../authMiddleware');  // Import authentication middleware
 const helmet = require("helmet");  // Import helmet for security headers
 const validationchecks = require('../utils/validationchecks');  // Import validation utilities
 const router = express.Router();  // Initialize the Express router
