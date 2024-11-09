@@ -9,7 +9,6 @@ on:
       - main
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -21,18 +20,18 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [16.x]  # Only use Node.js version 16.x
 
     steps:
       # Step 1: Checkout the repository
       - name: 🛎 Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
+      # Step 2: Set up Node.js (only for version 16)
       - name: 🛠 Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'  # Set to version 16 only
 
       # Debugging Step: List the directory contents to verify path
       - name: List Directory Contents
@@ -46,7 +45,6 @@ jobs:
           cd "Backend"
           npm install
           echo "Backend dependencies installed."
-
       
       # Step 4: Verify Node.js version
       - name: 🛠 Verify Node.js Version
@@ -59,9 +57,7 @@ jobs:
           cd "international-payments-portal"
           npm install --legacy-peer-deps
           echo "Frontend dependencies installed."
-          timeout-minutes: 20  # Adjust the timeout value as needed
-
-
+        timeout-minutes: 20  # Adjust the timeout value as needed
 
       # Step 6: Run SonarCloud Scan
       - name: SonarCloud Scan
