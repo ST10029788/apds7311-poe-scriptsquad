@@ -59,22 +59,27 @@ jobs:
           echo "Frontend dependencies installed."
         timeout-minutes: 20  # Adjust the timeout value as needed
         
+      # Step 6: Set up Java 17
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin' 
+          distribution: 'temurin'
 
+      # Step 7: Verify Java version
+      - name: Verify Java Version
+        run: |
+          echo "Java version $(java -version) is set."
 
-
-      # Step 6: Run SonarCloud Scan
+      # Step 8: Run SonarCloud Scan
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          JAVA_HOME: ${{ runner.tool_cache }}/java/temurin-17/  # Explicitly setting JAVA_HOME to the Java 17 path
 
-      # Step 7: Run Security Checks
+      # Step 9: Run Security Checks
       - name: Run Security Checks
         run: |
           cd international-payments-portal
@@ -115,7 +120,7 @@ jobs:
             echo "DDoS protection is in place."
           fi
 
-      # Step 8: Upload Test Results on Failure
+      # Step 10: Upload Test Results on Failure
       - name: Upload Test Results on Failure
         if: failure()
         uses: actions/upload-artifact@v3
@@ -123,7 +128,7 @@ jobs:
           name: test-results
           path: ./test-results
 
-      # Step 9: Complete Build
+      # Step 11: Complete Build
       - name: Build Complete
         if: success()
         run: echo "All steps completed successfully!"
