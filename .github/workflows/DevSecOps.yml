@@ -1,4 +1,4 @@
-name: DevSecOps
+name: DevOps
 
 on:
   push:
@@ -71,13 +71,14 @@ jobs:
         run: |
           echo "Java version $(java -version) is set."
 
-      # Step 8: Run SonarCloud Scan
+      # Step 8: Run SonarCloud Scan with Java 17
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          JAVA_HOME: ${{ runner.tool_cache }}/java/temurin-17/  # Explicitly set JAVA_HOME to Java 17
+          JAVA_HOME: ${{ runner.tool_cache }}/java/temurin-17/  # Explicitly set JAVA_HOME
+          SONAR_SCANNER_OPTS: -Djava.home=${{ runner.tool_cache }}/java/temurin-17/  # Pass JAVA_HOME to SonarScanner's Docker container
 
       # Step 9: Run Security Checks
       - name: Run Security Checks
@@ -132,4 +133,3 @@ jobs:
       - name: Build Complete
         if: success()
         run: echo "All steps completed successfully!"
-
