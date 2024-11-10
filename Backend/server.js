@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './Backend/.env' });
+
 const express = require('express');
 const cors = require('cors');
 const https = require('https');
@@ -19,9 +21,11 @@ connectToDatabase().catch(err => {
 let options;
 try {
     options = {
-        key: fs.readFileSync('./keys/privatekey.pem'),     // Read the private key from a file
-        cert: fs.readFileSync('./keys/certificate.pem')    // Read the SSL certificate from a file
+        key: fs.readFileSync('keys/privatekey.pem'),  // Relative path
+        cert: fs.readFileSync('keys/certificate.pem') // Relative path
     };
+    
+    
     console.log("Keys added"); // Log that the keys have been successfully loaded
 } catch (error) {
     console.error('Error loading SSL certificate or key:', error); // Log error if the certificate or key cannot be loaded
@@ -42,4 +46,3 @@ https.createServer(options, app).listen(PORT, () => {
     console.log(`Server is running on https://localhost:${PORT}`); // Log a message when the server starts successfully
 });
 
-//------------------------------------------END OF FILE-----------------------------------//
