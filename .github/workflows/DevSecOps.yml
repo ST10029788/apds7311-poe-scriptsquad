@@ -9,6 +9,18 @@ on:
       - main
 
 jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2.1.0 # Use the appropriate version
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build:
     runs-on: ubuntu-latest
 
@@ -59,31 +71,7 @@ jobs:
           echo "Frontend dependencies installed."
         timeout-minutes: 20  # Adjust the timeout value as needed
         
-      # Step 6: Set up Java 11 using Zulu
-      - name: Set up Java 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'zulu'
-
-      # Step 7: Verify Java version
-      - name: Verify Java Version
-        run: |
-          echo "Java version: $(java -version)"
-          echo "JAVA_HOME: $JAVA_HOME"
-          echo "Contents of JAVA_HOME/lib:"
-          ls -al $JAVA_HOME/lib
-
-      # Step 8: Run SonarCloud Scan with Java 11
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          JAVA_HOME: $JAVA_HOME  # JAVA_HOME is automatically set by setup-java
-          SONAR_SCANNER_OPTS: -Djava.home=$JAVA_HOME   # Pass JAVA_HOME to SonarScanner's Docker container
-
-      # Step 9: Run Security Checks
+      # Step 6: Run Security Checks
       - name: Run Security Checks
         run: |
           cd international-payments-portal
@@ -124,7 +112,7 @@ jobs:
             echo "DDoS protection is in place."
           fi
 
-      # Step 10: Upload Test Results on Failure
+      # Step 7: Upload Test Results on Failure
       - name: Upload Test Results on Failure
         if: failure()
         uses: actions/upload-artifact@v3
@@ -132,7 +120,7 @@ jobs:
           name: test-results
           path: ./test-results
 
-      # Step 11: Complete Build
+      # Step 8: Complete Build
       - name: Build Complete
         if: success()
         run: echo "All steps completed successfully!"
