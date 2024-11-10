@@ -59,11 +59,11 @@ jobs:
           echo "Frontend dependencies installed."
         timeout-minutes: 20  # Adjust the timeout value as needed
         
-      # Step 6: Set up Java 17 using Zulu
-      - name: Set up Java 17
+      # Step 6: Set up Java 11 using Zulu
+      - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'zulu'
 
       # Step 7: Verify Java version
@@ -74,7 +74,7 @@ jobs:
           echo "Contents of JAVA_HOME/lib:"
           ls -al $JAVA_HOME/lib
 
-      # Step 8: Run SonarCloud Scan with Java 17
+      # Step 8: Run SonarCloud Scan with Java 11
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v3
         env:
